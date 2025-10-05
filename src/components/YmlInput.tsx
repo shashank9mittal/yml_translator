@@ -88,18 +88,22 @@ export default function YmlInput({ value, onChange, onValidationChange }: YmlInp
         id="yml-input"
         value={value}
         onChange={handleInputChange}
-        placeholder='Enter your data in one of these formats:
+        placeholder='Paste your YAML configuration here...
 
-1. Escaped JSON String:
-"[\n {\n \"label\": \"Brick\",\n \"value\": \"BRICK\",\n \"actionable\": true\n }]"
+Example formats supported:
 
-2. Regular JSON:
-[{"label": "Brick", "value": "BRICK", "actionable": true}]
+📋 Escaped JSON String:
+"[\n {\n \"label\": \"Home\",\n \"value\": \"HOME\",\n \"actionable\": true\n }]"
 
-3. YAML:
-- label: Brick
-  value: BRICK
-  actionable: true'
+📄 Regular JSON:
+[{"label": "Home", "value": "HOME", "actionable": true}]
+
+🔧 YAML:
+- label: Home
+  value: HOME
+  actionable: true
+
+💡 Tip: Upload an Excel file with translations (Column A: Original labels, Column B: Translated labels)'
         className="bg-white p-3 border border-gray-300 focus:border-transparent rounded-md focus:ring-2 focus:ring-blue-500 w-full h-64 font-mono text-gray-900 text-sm resize-vertical"
       />
     </div>
