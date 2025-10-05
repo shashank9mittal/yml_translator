@@ -13,11 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://yml-translator-bpseutcze-shashank9mittals-projects.vercel.app'),
   title: "YML Processor - Free Online YAML Translation Tool",
   description: "Transform and translate YAML configurations instantly. Upload Excel files to translate labels in JSON, YAML, and escaped JSON formats. Free online tool for developers and DevOps teams.",
   keywords: [
     "YAML translator",
-    "JSON translator", 
+    "JSON translator",
     "YAML processor",
     "configuration translator",
     "Excel to YAML",
