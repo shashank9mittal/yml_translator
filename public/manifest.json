@@ -1,0 +1,21 @@
+{
+  "name": "YML Processor - YAML Translation Tool",
+  "short_name": "YML Processor",
+  "description": "Free online YAML translation tool for developers",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
