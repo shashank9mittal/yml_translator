@@ -9,17 +9,17 @@ export const parseInput = (input: string) => {
       const unescapedString = JSON.parse(input.trim());
       // Then parse the unescaped JSON string to get the actual data
       return JSON.parse(unescapedString);
-    } catch (escapedError) {
+    } catch (_escapedError) {
       throw new Error('Invalid escaped JSON string format');
     }
   } else {
     // Try parsing as regular YAML/JSON
     try {
       return yaml.load(input);
-    } catch (yamlError) {
+    } catch (_yamlError) {
       try {
         return JSON.parse(input);
-      } catch (jsonError) {
+      } catch (_jsonError) {
         throw new Error('Input is neither valid YAML, JSON, nor escaped JSON string format');
       }
     }
@@ -34,17 +34,17 @@ export const readExcelFile = async (file: File) => {
   return XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 };
 
-export const createTranslationMap = (excelData: any[]) => {
+export const createTranslationMap = (excelData: unknown[]) => {
   const translationMap: { [key: string]: string } = {};
-  excelData.slice(1).forEach((row: any) => { // Skip header row
-    if (row[0] && row[1]) { // Column A and Column B
+  excelData.slice(1).forEach((row: unknown) => { // Skip header row
+    if (Array.isArray(row) && row[0] && row[1]) { // Column A and Column B
       translationMap[row[0]] = row[1];
     }
   });
   return translationMap;
 };
 
-export const translateLabels = (obj: any, translationMap: { [key: string]: string }): any => {
+export const translateLabels = (obj: unknown, translationMap: { [key: string]: string }): unknown => {
   console.log('Processing object:', typeof obj, obj);
 
   if (Array.isArray(obj)) {
@@ -52,9 +52,9 @@ export const translateLabels = (obj: any, translationMap: { [key: string]: strin
     return obj.map(item => translateLabels(item, translationMap));
   } else if (obj && typeof obj === 'object') {
     console.log('Processing object with keys:', Object.keys(obj));
-    const newObj = { ...obj };
+    const newObj = { ...obj } as Record<string, unknown>;
 
-    if (newObj.label) {
+    if ('label' in newObj && typeof newObj.label === 'string') {
       console.log('Found label:', JSON.stringify(newObj.label), 'Type:', typeof newObj.label);
       console.log('Available translations:', Object.keys(translationMap));
 

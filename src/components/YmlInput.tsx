@@ -31,7 +31,7 @@ export default function YmlInput({ value, onChange, onValidationChange }: YmlInp
           // Then parse the unescaped JSON string to get the actual data
           parsedData = JSON.parse(unescapedString);
           format = 'Escaped JSON String';
-        } catch (escapedError) {
+        } catch (_escapedError) {
           setLocalValidationStatus('invalid');
           onValidationChange('invalid', '❌ Invalid escaped JSON string format');
           return;
@@ -41,11 +41,11 @@ export default function YmlInput({ value, onChange, onValidationChange }: YmlInp
         try {
           parsedData = yaml.load(input);
           format = 'YAML';
-        } catch (yamlError) {
+        } catch (_yamlError) {
           try {
             parsedData = JSON.parse(input);
             format = 'JSON';
-          } catch (jsonError) {
+          } catch (_jsonError) {
             setLocalValidationStatus('invalid');
             onValidationChange('invalid', '❌ Invalid format: Not valid YAML, JSON, or escaped JSON string');
             return;
