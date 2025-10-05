@@ -25,7 +25,7 @@ export default function Home() {
       "@type": "WebApplication",
       "name": "YML Processor",
       "description": "Free online YAML translation tool. Transform and translate YAML configurations using Excel files.",
-      "url": "https://yml-translator-bpseutcze-shashank9mittals-projects.vercel.app",
+      "url": "https://yml-translator.vercel.app",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Web Browser",
       "offers": {

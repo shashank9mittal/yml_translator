@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://yml-translator-bpseutcze-shashank9mittals-projects.vercel.app'),
+  metadataBase: new URL('https://yml-translator.vercel.app'),
   title: "YML Processor - Free Online YAML Translation Tool",
   description: "Transform and translate YAML configurations instantly. Upload Excel files to translate labels in JSON, YAML, and escaped JSON formats. Free online tool for developers and DevOps teams.",
   keywords: [
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://yml-translator-bpseutcze-shashank9mittals-projects.vercel.app',
+    url: 'https://yml-translator.vercel.app',
     siteName: 'YML Processor',
     title: 'YML Processor - Free Online YAML Translation Tool',
     description: 'Transform and translate YAML configurations instantly. Upload Excel files to translate labels in JSON, YAML, and escaped JSON formats.',
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     creator: '@ymlprocessor',
   },
   alternates: {
-    canonical: 'https://yml-translator-bpseutcze-shashank9mittals-projects.vercel.app',
+    canonical: 'https://yml-translator.vercel.app',
   },
   category: 'Developer Tools',
 };
