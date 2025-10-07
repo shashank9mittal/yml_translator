@@ -3,15 +3,18 @@
 import { useState } from 'react';
 import * as yaml from 'js-yaml';
 import Spinner from './Spinner';
+import FieldSelector from './FieldSelector';
 
 interface YmlInputProps {
   value: string;
   onChange: (value: string) => void;
   onValidationChange: (status: 'valid' | 'invalid' | 'empty', parsedJson: string) => void;
   isProcessing?: boolean;
+  selectedField: 'label' | 'name';
+  onFieldChange: (field: 'label' | 'name') => void;
 }
 
-export default function YmlInput({ value, onChange, onValidationChange, isProcessing = false }: YmlInputProps) {
+export default function YmlInput({ value, onChange, onValidationChange, isProcessing = false, selectedField, onFieldChange }: YmlInputProps) {
   const [localValidationStatus, setLocalValidationStatus] = useState<'valid' | 'invalid' | 'empty'>('empty');
 
   const validateAndConvertYml = (input: string) => {
@@ -78,37 +81,44 @@ export default function YmlInput({ value, onChange, onValidationChange, isProces
         {value.trim() && (
           <div className="flex items-center space-x-2">
             {isProcessing && <Spinner size="sm" className="text-blue-600" />}
-            <span className={`px-2 py-1 rounded text-xs font-medium ${
-              localValidationStatus === 'valid' ? 'bg-green-100 text-green-800' :
+            <span className={`px-2 py-1 rounded text-xs font-medium ${localValidationStatus === 'valid' ? 'bg-green-100 text-green-800' :
               localValidationStatus === 'invalid' ? 'bg-red-100 text-red-800' :
-              'bg-gray-100 text-gray-800'
-            }`}>
+                'bg-gray-100 text-gray-800'
+              }`}>
               {localValidationStatus === 'valid' ? '✅ Valid Format' :
-               localValidationStatus === 'invalid' ? '❌ Invalid Format' : 'Empty'}
+                localValidationStatus === 'invalid' ? '❌ Invalid Format' : 'Empty'}
             </span>
           </div>
         )}
       </div>
+
+      <div className="mb-3">
+        <FieldSelector
+          selectedField={selectedField}
+          onFieldChange={onFieldChange}
+        />
+      </div>
+
       <textarea
         id="yml-input"
         value={value}
         onChange={handleInputChange}
-        placeholder='Paste your YAML configuration here...
+        placeholder={`Paste your YAML configuration here...
 
 Example formats supported:
 
 📋 Escaped JSON String:
-"[\n {\n \"label\": \"Home\",\n \"value\": \"HOME\",\n \"actionable\": true\n }]"
+"[\\n {\\n \\"${selectedField}\\": \\"Home\\",\\n \\"value\\": \\"HOME\\",\\n \\"actionable\\": true\\n }]"
 
 📄 Regular JSON:
-[{"label": "Home", "value": "HOME", "actionable": true}]
+[{"${selectedField}": "Home", "value": "HOME", "actionable": true}]
 
 🔧 YAML:
-- label: Home
+- ${selectedField}: Home
   value: HOME
   actionable: true
 
-💡 Tip: Upload an Excel file with translations (Column A: Original labels, Column B: Translated labels)'
+💡 Tip: Upload an Excel file with translations (Column A: Original ${selectedField}s, Column B: Translated ${selectedField}s)`}
         className="bg-white p-3 border border-gray-300 focus:border-transparent rounded-md focus:ring-2 focus:ring-blue-500 w-full h-64 font-mono text-gray-900 text-sm resize-vertical"
       />
     </div>

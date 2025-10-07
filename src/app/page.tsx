@@ -25,10 +25,12 @@ export default function Home() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [outputValidationStatus, setOutputValidationStatus] = useState<'valid' | 'invalid' | 'empty'>('empty');
   const [outputValidationMessage, setOutputValidationMessage] = useState<string>('');
+  const [selectedField, setSelectedField] = useState<'label' | 'name'>('label');
   
   // Extraction tab state
   const [extractInput, setExtractInput] = useState('');
   const [extractedLabels, setExtractedLabels] = useState<string[]>([]);
+  const [extractSelectedField, setExtractSelectedField] = useState<'label' | 'name'>('label');
 
   // Add structured data after component mounts to avoid hydration issues
   useEffect(() => {
@@ -124,8 +126,8 @@ export default function Home() {
         throw new Error('No translations found in Excel file. Please ensure columns A and B contain labels and translations.');
       }
 
-      // Apply translations
-      const translatedData = translateLabels(ymlData, translationMap);
+      // Apply translations using selected field
+      const translatedData = translateLabels(ymlData, translationMap, selectedField);
       console.log('Translated data:', translatedData);
 
       // Convert to the specific escaped string format
@@ -196,6 +198,8 @@ export default function Home() {
                 onChange={setYmlInput}
                 onValidationChange={handleValidationChange}
                 isProcessing={isProcessing}
+                selectedField={selectedField}
+                onFieldChange={setSelectedField}
               />
             </article>
 
@@ -279,12 +283,14 @@ export default function Home() {
                     value={extractInput}
                     onChange={setExtractInput}
                     onExtract={setExtractedLabels}
+                    selectedField={extractSelectedField}
+                    onFieldChange={setExtractSelectedField}
                   />
                 </article>
 
                 {/* Right Column - Extracted Labels */}
                 <article className="bg-white shadow-md p-4 rounded-lg" aria-label="Extracted Labels Display">
-                  <ExtractedLabels labels={extractedLabels} />
+                  <ExtractedLabels labels={extractedLabels} selectedField={extractSelectedField} />
                 </article>
               </section>
             </>

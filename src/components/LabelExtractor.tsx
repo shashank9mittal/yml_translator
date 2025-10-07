@@ -3,14 +3,17 @@
 import { useState } from 'react';
 import * as yaml from 'js-yaml';
 import Spinner from './Spinner';
+import FieldSelector from './FieldSelector';
 
 interface LabelExtractorProps {
   value: string;
   onChange: (value: string) => void;
   onExtract: (labels: string[]) => void;
+  selectedField: 'label' | 'name';
+  onFieldChange: (field: 'label' | 'name') => void;
 }
 
-export default function LabelExtractor({ value, onChange, onExtract }: LabelExtractorProps) {
+export default function LabelExtractor({ value, onChange, onExtract, selectedField, onFieldChange }: LabelExtractorProps) {
   const [validationStatus, setValidationStatus] = useState<'valid' | 'invalid' | 'empty'>('empty');
   const [isExtracting, setIsExtracting] = useState(false);
 
@@ -35,8 +38,8 @@ export default function LabelExtractor({ value, onChange, onExtract }: LabelExtr
         }
       }
 
-      // Extract labels
-      const labels = extractLabelsFromData(parsedData);
+      // Extract labels using selected field
+      const labels = extractLabelsFromData(parsedData, selectedField);
       setValidationStatus('valid');
       onExtract(labels);
     } catch (_error) {
@@ -45,7 +48,7 @@ export default function LabelExtractor({ value, onChange, onExtract }: LabelExtr
     }
   };
 
-  const extractLabelsFromData = (data: unknown): string[] => {
+  const extractLabelsFromData = (data: unknown, fieldName: 'label' | 'name'): string[] => {
     const labels: string[] = [];
     
     const traverse = (obj: unknown) => {
@@ -53,8 +56,8 @@ export default function LabelExtractor({ value, onChange, onExtract }: LabelExtr
         obj.forEach(traverse);
       } else if (obj && typeof obj === 'object') {
         const record = obj as Record<string, unknown>;
-        if ('label' in record && typeof record.label === 'string') {
-          labels.push(record.label);
+        if (fieldName in record && typeof record[fieldName] === 'string') {
+          labels.push(record[fieldName] as string);
         }
         Object.values(record).forEach(traverse);
       }
@@ -78,6 +81,14 @@ export default function LabelExtractor({ value, onChange, onExtract }: LabelExtr
     setIsExtracting(false);
   };
 
+  const handleFieldChange = (field: 'label' | 'name') => {
+    onFieldChange(field);
+    // Re-extract with new field if there's input
+    if (value.trim()) {
+      validateAndExtract(value);
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
@@ -99,31 +110,38 @@ export default function LabelExtractor({ value, onChange, onExtract }: LabelExtr
         )}
       </div>
       
+      <div className="mb-3">
+        <FieldSelector
+          selectedField={selectedField}
+          onFieldChange={handleFieldChange}
+        />
+      </div>
+      
       <textarea
         id="extract-input"
         value={value}
         onChange={handleInputChange}
-        placeholder='Paste your YAML/JSON here to extract all labels...
+        placeholder={`Paste your YAML/JSON here to extract all ${selectedField} fields...
 
 Example:
 [
   {
-    "label": "Home",
+    "${selectedField}": "Home",
     "value": "HOME",
     "actionable": true
   },
   {
-    "label": "Settings",
+    "${selectedField}": "Settings",
     "options": [
       {
-        "label": "Profile",
+        "${selectedField}": "Profile",
         "value": "PROFILE"
       }
     ]
   }
 ]
 
-💡 All "label" fields will be extracted automatically'
+💡 All "${selectedField}" fields will be extracted automatically`}
         className="bg-white p-3 border border-gray-300 focus:border-transparent rounded-md focus:ring-2 focus:ring-blue-500 w-full h-64 font-mono text-gray-900 text-sm resize-vertical"
       />
       
@@ -143,7 +161,7 @@ Example:
               Extracting...
             </div>
           ) : (
-            'Extract Labels'
+            `Extract ${selectedField === 'label' ? 'Labels' : 'Names'}`
           )}
         </button>
       </div>

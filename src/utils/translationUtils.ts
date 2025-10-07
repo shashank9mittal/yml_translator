@@ -44,35 +44,35 @@ export const createTranslationMap = (excelData: unknown[]) => {
   return translationMap;
 };
 
-export const translateLabels = (obj: unknown, translationMap: { [key: string]: string }): unknown => {
+export const translateLabels = (obj: unknown, translationMap: { [key: string]: string }, fieldName: 'label' | 'name' = 'label'): unknown => {
   console.log('Processing object:', typeof obj, obj);
 
   if (Array.isArray(obj)) {
     console.log('Processing array with', obj.length, 'items');
-    return obj.map(item => translateLabels(item, translationMap));
+    return obj.map(item => translateLabels(item, translationMap, fieldName));
   } else if (obj && typeof obj === 'object') {
     console.log('Processing object with keys:', Object.keys(obj));
     const newObj = { ...obj } as Record<string, unknown>;
 
-    if ('label' in newObj && typeof newObj.label === 'string') {
-      console.log('Found label:', JSON.stringify(newObj.label), 'Type:', typeof newObj.label);
+    if (fieldName in newObj && typeof newObj[fieldName] === 'string') {
+      console.log(`Found ${fieldName}:`, JSON.stringify(newObj[fieldName]), 'Type:', typeof newObj[fieldName]);
       console.log('Available translations:', Object.keys(translationMap));
 
-      if (translationMap[newObj.label]) {
-        console.log('✅ Translating:', newObj.label, 'to:', translationMap[newObj.label]);
-        newObj.label = translationMap[newObj.label];
+      if (translationMap[newObj[fieldName] as string]) {
+        console.log('✅ Translating:', newObj[fieldName], 'to:', translationMap[newObj[fieldName] as string]);
+        newObj[fieldName] = translationMap[newObj[fieldName] as string];
       } else {
-        console.log('❌ No translation found for:', JSON.stringify(newObj.label));
+        console.log('❌ No translation found for:', JSON.stringify(newObj[fieldName]));
         // Check for partial matches
-        const exactMatch = Object.keys(translationMap).find(key => key === newObj.label);
+        const exactMatch = Object.keys(translationMap).find(key => key === newObj[fieldName]);
         console.log('Exact match check:', exactMatch);
       }
     }
 
     // Recursively translate nested objects
     Object.keys(newObj).forEach(key => {
-      if (key !== 'label') {
-        newObj[key] = translateLabels(newObj[key], translationMap);
+      if (key !== fieldName) {
+        newObj[key] = translateLabels(newObj[key], translationMap, fieldName);
       }
     });
     return newObj;
