@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import * as yaml from 'js-yaml';
+import Spinner from './Spinner';
 
 interface LabelExtractorProps {
   value: string;
@@ -11,6 +12,7 @@ interface LabelExtractorProps {
 
 export default function LabelExtractor({ value, onChange, onExtract }: LabelExtractorProps) {
   const [validationStatus, setValidationStatus] = useState<'valid' | 'invalid' | 'empty'>('empty');
+  const [isExtracting, setIsExtracting] = useState(false);
 
   const validateAndExtract = (input: string) => {
     if (!input.trim()) {
@@ -68,8 +70,12 @@ export default function LabelExtractor({ value, onChange, onExtract }: LabelExtr
     validateAndExtract(newValue);
   };
 
-  const handleExtractClick = () => {
+  const handleExtractClick = async () => {
+    setIsExtracting(true);
+    // Add a small delay to show the spinner for user feedback
+    await new Promise(resolve => setTimeout(resolve, 300));
     validateAndExtract(value);
+    setIsExtracting(false);
   };
 
   return (
@@ -79,14 +85,17 @@ export default function LabelExtractor({ value, onChange, onExtract }: LabelExtr
           YAML/JSON Input
         </label>
         {value.trim() && (
-          <span className={`px-2 py-1 rounded text-xs font-medium ${
-            validationStatus === 'valid' ? 'bg-green-100 text-green-800' :
-            validationStatus === 'invalid' ? 'bg-red-100 text-red-800' :
-            'bg-gray-100 text-gray-800'
-          }`}>
-            {validationStatus === 'valid' ? '✅ Valid Format' :
-             validationStatus === 'invalid' ? '❌ Invalid Format' : 'Empty'}
-          </span>
+          <div className="flex items-center space-x-2">
+            {isExtracting && <Spinner size="sm" className="text-green-600" />}
+            <span className={`px-2 py-1 rounded text-xs font-medium ${
+              validationStatus === 'valid' ? 'bg-green-100 text-green-800' :
+              validationStatus === 'invalid' ? 'bg-red-100 text-red-800' :
+              'bg-gray-100 text-gray-800'
+            }`}>
+              {validationStatus === 'valid' ? '✅ Valid Format' :
+               validationStatus === 'invalid' ? '❌ Invalid Format' : 'Empty'}
+            </span>
+          </div>
         )}
       </div>
       
@@ -121,9 +130,21 @@ Example:
       <div className="flex justify-center mt-4">
         <button
           onClick={handleExtractClick}
-          className="bg-green-600 hover:bg-green-700 px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium text-white transition-colors duration-200"
+          disabled={isExtracting}
+          className={`px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium text-white transition-colors duration-200 ${
+            isExtracting
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-green-600 hover:bg-green-700'
+          }`}
         >
-          Extract Labels
+          {isExtracting ? (
+            <div className="flex items-center">
+              <Spinner size="sm" className="mr-2 text-white" />
+              Extracting...
+            </div>
+          ) : (
+            'Extract Labels'
+          )}
         </button>
       </div>
     </div>

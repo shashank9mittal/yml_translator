@@ -2,14 +2,16 @@
 
 import { useState } from 'react';
 import * as yaml from 'js-yaml';
+import Spinner from './Spinner';
 
 interface YmlInputProps {
   value: string;
   onChange: (value: string) => void;
   onValidationChange: (status: 'valid' | 'invalid' | 'empty', parsedJson: string) => void;
+  isProcessing?: boolean;
 }
 
-export default function YmlInput({ value, onChange, onValidationChange }: YmlInputProps) {
+export default function YmlInput({ value, onChange, onValidationChange, isProcessing = false }: YmlInputProps) {
   const [localValidationStatus, setLocalValidationStatus] = useState<'valid' | 'invalid' | 'empty'>('empty');
 
   const validateAndConvertYml = (input: string) => {
@@ -74,14 +76,17 @@ export default function YmlInput({ value, onChange, onValidationChange }: YmlInp
           YAML/JSON Configuration
         </label>
         {value.trim() && (
-          <span className={`px-2 py-1 rounded text-xs font-medium ${
-            localValidationStatus === 'valid' ? 'bg-green-100 text-green-800' :
-            localValidationStatus === 'invalid' ? 'bg-red-100 text-red-800' :
-            'bg-gray-100 text-gray-800'
-          }`}>
-            {localValidationStatus === 'valid' ? '✅ Valid Format' :
-             localValidationStatus === 'invalid' ? '❌ Invalid Format' : 'Empty'}
-          </span>
+          <div className="flex items-center space-x-2">
+            {isProcessing && <Spinner size="sm" className="text-blue-600" />}
+            <span className={`px-2 py-1 rounded text-xs font-medium ${
+              localValidationStatus === 'valid' ? 'bg-green-100 text-green-800' :
+              localValidationStatus === 'invalid' ? 'bg-red-100 text-red-800' :
+              'bg-gray-100 text-gray-800'
+            }`}>
+              {localValidationStatus === 'valid' ? '✅ Valid Format' :
+               localValidationStatus === 'invalid' ? '❌ Invalid Format' : 'Empty'}
+            </span>
+          </div>
         )}
       </div>
       <textarea
